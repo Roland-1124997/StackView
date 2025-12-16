@@ -90,6 +90,40 @@ export const useNotificationsStore = defineStore("Notifications", () => {
         });
     };
 
+
+    const requestPermission = async () => {
+
+        if (!("Notification" in window) || Notification.permission !== "default") return;
+        
+        Notification.requestPermission()
+            .then((permission) => {
+
+                if (permission !== 'granted') {
+                    addToast({
+                        message: `Notification permisions denied`,
+                        type: "error",
+                        duration: 5000,
+                    })
+                    return
+                }
+
+                addToast({
+                    message: `Notification permissions granted`,
+                    type: "success",
+                    duration: 5000,
+                })
+
+                return navigator.serviceWorker.ready
+            })
+
+            .catch((error) => addToast({
+                message: `Error requesting notification permissions: ${error}`,
+                type: "error",
+                duration: 5000,
+            }));
+    };
+
+
     const deleteMessage = async (message: any) => {
 
         const onConfirm = async () => {
@@ -142,6 +176,7 @@ export const useNotificationsStore = defineStore("Notifications", () => {
         markAsSeen,
         markAsUnseen,
         deleteMessage,
+        requestPermission,
     };
 });
 

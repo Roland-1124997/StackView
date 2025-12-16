@@ -7,7 +7,7 @@
 				<div class="flex items-center gap-2">
 					<UtilsButton to="/articles" iconName="akar-icons:newspaper" :options="{ name: 'Artikelen' }" />
 					<UtilsButton to="/profile" iconName="akar-icons:person" :options="{ name: 'Profile' }" />
-					<UtilsButton to="/notifications" iconName="akar-icons:inbox" :options="notificationsOptions" />
+					<UtilsButton @click="notificationsStore.requestPermission()" to="/notifications" iconName="akar-icons:inbox" :options="notificationsOptions" />
 					<UtilsButtonAction iconName="akar-icons:door" :options="{ name: 'Logout', hidden: true }" @click="logout" />
 				</div>
 			</div>
@@ -78,26 +78,4 @@
 		closeNotifications();
 	});
 
-	const requestNotificationsPermission = async () => {
-		if ("Notification" in window) {
-			const permission = await Notification.requestPermission();
-			
-			if (permission === "granted") return addToast({
-				message: "Notificatie permissies toegestaan",
-				type: "success",
-			});
-			
-			else if (permission === "denied") return addToast({
-				message: "Notificatie permissies geweigerd",
-				type: "error",
-			});
-		
-		}
-	};
-
-	onMounted(async () => {
-		if ("Notification" in window && Notification.permission === "default") {
-			await requestNotificationsPermission();
-		}
-	});
 </script>
