@@ -17,7 +17,8 @@
 				</div>
 
 				<nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-					<NuxtLink v-for="route in routes" :key="route.to" :to="route.to" class="flex items-center gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-100 hover:text-blue-800" @click="isMobileMenuOpen = false">
+
+					<NuxtLink v-for="(route, to) in routes" :key="to" :to="`${to}`" class="flex items-center gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-100 hover:text-blue-800" @click="isMobileMenuOpen = false">
 						<Icon :name="route.iconName" class="w-5 h-5" />
 						<span class="flex-1">{{ route.label }}</span>
 						<span v-if="route.alert && notificationsStore.unseen > 0" class="px-2 py-0.5 flex items-center justify-center text-xs font-medium text-white bg-red-600 rounded-full">
@@ -59,18 +60,18 @@
 				<input id="file" ref="inputRef" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" @change="handleFileSelect" class="sr-only" />
 			</div>
 
-			<div v-if="config" :class="config?.stacked ? 'flex-col h-[6.8rem] pt-[0.67rem]' : 'h-16 items-center justify-between'" class="z-40 flex gap-2 px-4 bg-white border-b lg:px-4">
-				<UtilsInputSearch name="search" :label="config.search.label" :placeholder="config.search.placeholder" />
+			<div v-if="toolbar" :class="toolbar?.stacked ? 'flex-col h-[6.8rem] pt-[0.67rem]' : 'h-16 items-center justify-between'" class="z-40 flex gap-2 px-4 bg-white border-b lg:px-4">
+				<UtilsInputSearch name="search" :label="toolbar.search.label" :placeholder="toolbar.search.placeholder" />
 
-				<div v-if="config?.groupWithFilters" class="flex items-center gap-[0.35rem]">
-					<UtilsButtonImportant v-for="(btn, index) in config.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
+				<div v-if="toolbar?.groupWithFilters" class="flex items-center gap-[0.35rem]">
+					<UtilsButtonImportant v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
 
-					<UtilsButtonFilter v-for="filterItem in config.filters" :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :callback="setFilter" :color="filterItem.color" :large="filterItem.large" />
+					<UtilsButtonFilter v-for="filterItem in toolbar.filters" :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :color="filterItem.color" :large="filterItem.large" />
 
 				</div>
 
-				<template v-else-if="config?.buttons">
-					<UtilsButtonImportant v-for="(btn, index) in config.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
+				<template v-else-if="toolbar?.buttons">
+					<UtilsButtonImportant v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
 				</template>
 			</div>
 
@@ -93,36 +94,12 @@
 </template>
 
 <script setup lang="ts">
+
 	const store = useSessionsStore();
 	const storageStore = useStorageStore();
 	const notificationsStore = useNotificationsStore();
 
-	type RouteType = {
-		to: string;
-		label: string;
-		iconName: string;
-		alert?: boolean;
-	};
-
-	const routes = ref<RouteType[]>([]);
-	const toolbar = ref<any>(null);
-
-	const { data, error } = await useFetch<RouteType[]>("/api/configuration/routes");
-	const { data: toolbarData, error: toolbarError } = await useFetch<Record<string, any>>("/api/configuration/toolbar");
-
-	if (!error.value) routes.value = data.value || [];
-	if (!toolbarError.value) toolbar.value = toolbarData.value || null;
-
-	const route = useRoute();
-	const current = ref(route.path);
-
-	const { setFilter } = useFilter();
-
-	const config = computed(() => {
-		current.value = route.path;
-
-		return toolbar.value[current.value] || null;
-	});
+	const { routes, toolbar } = await useApiRoutes();
 
 	const { addToast } = useToast();
 	const isMobileMenuOpen = ref(false);

@@ -89,21 +89,20 @@
 		],
 	});
 
-	const route = useRoute();
-	const article = ref();
-
+	
 	const { search } = useSearch()
 	const query = computed(() => search.value || "");
 
-	const Request = useApiHandler<ApiResponse<any>>("/api/articles");
 	const { create, close } = useModal();
 	const { addToast } = useToast();
 
-	const { data, error } = await useFetch(`/api/articles`);
-	if (!error.value && data.value) article.value = data.value.data;
+	const { useResponse } = await useApiRoutes();
+	const { articles }: { articles: Record<string, any> } = await useResponse();
+	
+	const Request = useApiHandler<ApiResponse<Record<string, any>>>("/api/articles");
 
 	const filteredArticles = computed(() => {
-		let filtered = article.value || [];
+		let filtered = articles.value || [];
 
 		if (query.value) {
 			filtered = filtered.filter((message: any) => {
@@ -118,7 +117,7 @@
 	});
 
 	const deleteArticle = async (id: string) => {
-		const content = article.value.find((art: any) => art.id === id);
+		const content = articles.value.find((art: any) => art.id === id);
 
 		const onConfirm = async () => {
 			const { error } = await Request.Delete({ extends: `/${id}` });
@@ -131,7 +130,7 @@
 					type: "error",
 				});
 
-			article.value = article.value.filter((art: any) => art.id !== id);
+			articles.value = articles.value.filter((art: any) => art.id !== id);
 
 			addToast({
 				message: "Artikel succesvol verwijderd",

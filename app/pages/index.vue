@@ -14,7 +14,7 @@
 		</section>
 		<section v-else class="relative z-10 flex items-center justify-center w-full h-32 mt-4 bg-white border rounded-lg">
 			<p class="text-gray-500">
-				{{ error ? "Fout bij het laden van analytics." : "Laden van analytics..." }}
+				{{ !analytics ? "Fout bij het laden van analytics." : "Laden van analytics..." }}
 			</p>
 		</section>
 
@@ -51,7 +51,7 @@
 			</article>
 			<article v-else class="relative z-10 flex items-center justify-center w-full h-32 bg-white border rounded-lg">
 				<p class="text-gray-500">
-					{{ error ? "Fout bij het laden van analytics." : "Laden van analytics..." }}
+					{{ !analytics ? "Fout bij het laden van analytics." : "Laden van analytics..." }}
 				</p>
 			</article>
 		</section>
@@ -89,9 +89,12 @@
 		],
 	});
 
+	const { useResponse } = await useApiRoutes();
+	const { analytics }: { analytics: Record<string, any> } = await useResponse();
+
 	const route = useRoute();
 	const router = useRouter();
-	const analytics = ref();
+
 	const isMobile = ref(false);
 	const isTableEnabled = ref(route.query.table === "true");
 
@@ -112,9 +115,6 @@
 		isTableEnabled.value = !isTableEnabled.value;
 		router.push({ query: { table: `${isTableEnabled.value}` } });
 	};
-
-	const { data, error } = await useFetch("/api/umami/analytics");
-	if (!error.value && data.value) analytics.value = (data.value as any).data;
 
 	onMounted(() => {
 		isMobile.value = window.innerWidth < 768;

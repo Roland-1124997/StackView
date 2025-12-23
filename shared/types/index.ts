@@ -83,3 +83,48 @@ export type Anchor = {
     itemIndex: number;
     textContent: string;
 };
+
+type search = {
+    label: string,
+    placeholder: string,
+}
+
+type Filters = {
+    type: string,
+    iconName: string,
+    label: string,
+    alwaysShowLabel: boolean,
+    ariaLabel: string,
+    color: string,
+    large: boolean,
+}
+
+type Buttons = {
+    iconName: string,
+    to: string,
+    description: string,
+    isSmall: boolean,
+    isButton: boolean,
+    onClick?: 'triggerFileSelect' | 'refresh',
+}
+
+type ToolBar = {
+    stacked: boolean;
+    groupWithFilters: boolean;
+    buttons: Buttons[];
+    filters: Filters[];
+    search: search;
+}
+
+export type requests = {
+    name: string;
+    endpoint: string;
+}
+
+export type RouteType = {
+    label: string;
+    iconName: string;
+    alert?: boolean;
+    toolbar?: ToolBar;
+    requests?: requests[];
+};
