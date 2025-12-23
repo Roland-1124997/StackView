@@ -84,7 +84,7 @@
 		</div>
 
 		<UtilsToast />
-		<div class="fixed z-50 w-screen h-screen pointer-events-none">
+		<div class="fixed z-[100] w-screen h-screen pointer-events-none">
 			<div class="pointer-events-auto">
 				<Modal />
 			</div>

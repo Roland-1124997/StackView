@@ -1,5 +1,5 @@
 
-import type { FetchUrl, SendOptions, MethodOptions, ErrorResponse } from "#shared/types";
+import type { FetchUrl, SendOptions, MethodOptions, ErrorResponse, ApiResponse } from "#shared/types";
 
 const catcher = async <T>(promise: Promise<T>) => {
 
@@ -13,6 +13,16 @@ const catcher = async <T>(promise: Promise<T>) => {
     }
 }
 
+export const useCsrfToken = async () => {
+
+    let token = ""
+
+    const { data, error } = await catcher<ApiResponse<{ csrfToken: string }>>($fetch("/api/auth/csrf"));
+    if (!error) token = data?.data?.csrfToken || "";
+
+    return token
+}
+
 export const useApiHandler = <G>(url: FetchUrl) => {
 
     const Send = <T = G>(options?: SendOptions) => {
@@ -22,20 +32,26 @@ export const useApiHandler = <G>(url: FetchUrl) => {
         })
     )}
 
-    const Get = <T = G>(options?: MethodOptions) => Send<T>({ 
+    const Get = <T = G>(options?: MethodOptions) => Send<T>({
         ...options, method: 'GET'
     })
-    
-    const Post = <T = G>(options?: MethodOptions) => Send<T>({ 
-        ...options, method: 'POST'
+
+    const Post = async <T = G>(options?: MethodOptions) => Send<T>({
+        ...options, method: 'POST', headers: {
+            'X-CSRF-Token': await useCsrfToken()
+        }
     })
 
-    const Delete = <T = G>(options?: MethodOptions) => Send<T>({ 
-        ...options, method: 'DELETE'
+    const Delete = async <T = G>(options?: MethodOptions) => Send<T>({
+        ...options, method: 'DELETE', headers: {
+            'X-CSRF-Token': await useCsrfToken()
+        }
     })
 
-    const Patch = <T = G>(options?: MethodOptions) => Send<T>({ 
-        ...options, method: 'PATCH'
+    const Patch = async <T = G>(options?: MethodOptions) => Send<T>({
+        ...options, method: 'PATCH', headers: {
+            'X-CSRF-Token': await useCsrfToken()
+        }
     })
 
     return {

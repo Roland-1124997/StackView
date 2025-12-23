@@ -76,6 +76,10 @@ export default defineNuxtConfig({
     supabaseUrl: process.env.SUPABASE_URL,
     supabaseKey: process.env.SUPABASE_KEY,
     supabaseSecretKey: process.env.SUPABASE_SECRET_KEY,
+
+    whitelistedDomains: process.env.WHITELISTED_DOMAINS,
+    production: process.env.NODE_ENV === 'development' ? false : true
+
   },
 
 

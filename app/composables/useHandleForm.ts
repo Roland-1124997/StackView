@@ -9,6 +9,7 @@ export const useHandleForm = (request: requestOptions, callback?: Function ) => 
         const { data, error } = await useApiHandler<ApiResponse<unknown>>(request.url).Send({
             method: request.method,
             body: callback ? await callback(values) : values,
+            headers: { 'X-CSRF-Token': await useCsrfToken() }
         });
 
         await new Promise((resolve) => setTimeout(resolve, 500));

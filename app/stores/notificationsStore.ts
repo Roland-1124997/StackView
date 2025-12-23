@@ -45,7 +45,7 @@ export const useNotificationsStore = defineStore("Notifications", () => {
 
     const initialPayload = async () => {
 
-        const { data, error: Error } = await useFetch('/api/notifications');
+        const { data, error: Error } = await useFetch<ApiResponse<any>>('/api/notifications');
 
         if (!Error.value && data.value) {
             messages.value = data.value?.data.messages || [];
