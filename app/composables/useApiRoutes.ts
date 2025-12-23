@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 export const useApiRoutes = async () => {
 
     const routes = useState<Record<string, RouteType>>('api-routes', () => ({}));
