@@ -1,0 +1,21 @@
+name: Full Accessibility Audit
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  accessibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: mohammedfarhank/WCAG2.1-Scanner-github-action@main
+        with:
+          email: ${{ github.actor }}@company.com
+          name: ${{ github.actor }}
+          scan_mode: 'all'
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-report
+          path: ./reports/
