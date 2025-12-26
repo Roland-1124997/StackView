@@ -7,7 +7,7 @@
 				<div>
 					<div class="flex items-center space-x-3">
 						<div class="flex items-center justify-center w-12 h-12 bg-white rounded-xl">
-							<NuxtImg src="\icons\icon_512-white.svg" alt="Buildboard Logo" draggable="false" class="rounded-lg w-11 h-11 " />
+							<img src="\icons\icon_512-white.svg" alt="Buildboard Logo" draggable="false" class="rounded-lg w-11 h-11 " />
 						</div>
 						<span class="text-2xl font-bold text-white">Buildboard</span>
 					</div>
@@ -51,7 +51,7 @@
 				<div class="mt-12 mb-8 lg:hidden">
 					<div class="flex items-center space-x-3">
 						<div class="flex items-center justify-center w-12 h-12 bg-blue-600 rounded-xl">
-							<NuxtImg src="\icons\icon_512-blue.svg" alt="Buildboard Logo" draggable="false" class="w-10 h-10 rounded-lg " />
+							<img src="\icons\icon_512-blue.svg" alt="Buildboard Logo" draggable="false" class="w-10 h-10 rounded-lg " />
 						</div>
 						<span class="text-2xl font-bold text-gray-900"> Buildboard </span>
 					</div>
